@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THC | The HatchOut Club</title>
+    <link rel="shortcut icon" href="THC_LOGO.jpg" type="image/x-icon">
+    
+    <!-- Google Fonts -->
+    <!-- Importing Libre Baskerville (Headings), Quicksand (Body), and Pinyon Script (Snell Alternative) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Pinyon+Script&family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- Tailwind Config for Custom Colors/Fonts -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        thc: {
+                            green: '#543787', // Deep Purple (Brand Primary)
+                            sand: '#fcfbf9',  // Adjusted to be slightly warmer (Cream)
+                            gold: '#a7b5fe',  // Periwinkle (Brand Accent)
+                            charcoal: '#2d2d2d',
+                            mist: '#f1f3fb'   // Light Purple-Grey
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['"Libre Baskerville"', 'serif'],
+                        sans: ['"Quicksand"', 'sans-serif'],
+                        script: ['"Snell Roundhand"', '"Pinyon Script"', 'cursive'], // Custom Script stack
+                    },
+                    backgroundImage: {
+                        'hero-pattern': "url('https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?ixlib=rb-4.0.3&auto=format&fit=crop&w=2021&q=80')",
+                        'texture': "url('https://www.transparenttextures.com/patterns/cream-paper.png')",
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Styles for Aesthetics */
+        body {
+            background-color: #fcfbf9;
+            background-image: url('https://www.transparenttextures.com/patterns/cream-paper.png');
+        }
+        
+        .hero-text-shadow {
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+        }
+
+        /* Script Text Class */
+        .font-script-custom {
+            font-family: "Snell Roundhand", "Pinyon Script", cursive;
+        }
+
+        /* Smooth reveal animation classes */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 1s ease-out;
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #fcfbf9; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #543787; 
+        }
+
+        .image-hover-zoom {
+            overflow: hidden;
+        }
+        .image-hover-zoom img {
+            transition: transform 0.7s ease;
+        }
+        .image-hover-zoom:hover img {
+            transform: scale(1.05);
+        }
+        
+        /* Loader */
+        #loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #543787;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease-out, visibility 0.5s;
+        }
+        .loader-content {
+            color: #fcfbf9;
+            font-family: 'Libre Baskerville', serif;
+            font-size: 2rem;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body class="text-thc-charcoal font-sans antialiased overflow-x-hidden selection:bg-thc-gold selection:text-thc-green">
+
+    <!-- Loading Screen -->
+    <div id="loader">
+        <div class="loader-content flex flex-col items-center">
+            <img src="THC_LOGO.jpg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'" alt="THC Logo" class="h-24 mb-4 rounded-full border-2 border-thc-gold p-1">
+            <span style="display:none">THC</span>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 transition-all duration-300 px-6 py-4" id="navbar">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <!-- Logo -->
+            <a href="#" class="text-2xl font-serif font-bold tracking-widest text-white flex items-center gap-3">
+                 <img src="THC_LOGO.jpg" alt="THC Logo" class="h-12 w-12 rounded-full border border-white/20">
+                 <span class="tracking-widest text-lg">The HatchOut Club</span>
+            </a>
+
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex space-x-8 items-center">
+                <a href="#philosophy" class="text-white/90 hover:text-thc-gold transition text-sm font-bold tracking-widest uppercase">Our Philosophy</a>
+                <a href="#vibe" class="text-white/90 hover:text-thc-gold transition text-sm font-bold tracking-widest uppercase">The Vibe</a>
+                <a href="#hatchouts" class="text-white/90 hover:text-thc-gold transition text-sm font-bold tracking-widest uppercase">HatchOuts</a>
+                <a href="#join" class="px-6 py-2 border border-white text-white hover:bg-white hover:text-thc-green transition duration-300 text-sm font-bold tracking-widest uppercase">Request Invite</a>
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <button class="md:hidden text-white text-2xl" onclick="toggleMobileMenu()">
+                <i class="ph ph-list"></i>
+            </button>
+        </div>
+        
+        <!-- Mobile Menu Overlay -->
+        <div id="mobile-menu" class="fixed inset-0 bg-thc-green z-40 transform translate-x-full transition-transform duration-300 flex flex-col justify-center items-center space-y-8 md:hidden">
+            <button class="absolute top-6 right-6 text-white text-3xl" onclick="toggleMobileMenu()">
+                <i class="ph ph-x"></i>
+            </button>
+            <a href="#philosophy" onclick="toggleMobileMenu()" class="text-2xl text-white font-serif italic">Our Philosophy</a>
+            <a href="#vibe" onclick="toggleMobileMenu()" class="text-2xl text-white font-serif italic">The Vibe</a>
+            <a href="#hatchouts" onclick="toggleMobileMenu()" class="text-2xl text-white font-serif italic">Upcoming HatchOuts</a>
+            <a href="#join" onclick="toggleMobileMenu()" class="text-2xl text-thc-gold font-serif italic">Join the Club</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="relative h-screen w-full flex items-center justify-center overflow-hidden">
+        <!-- Background Image with Overlay -->
+        <div class="absolute inset-0 z-0">
+            <div class="absolute inset-0 bg-gradient-to-b from-black/40 via-thc-green/20 to-thc-green/80 z-10"></div>
+            <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" 
+                 class="w-full h-full object-cover animate-pan-slow" alt="Camping in mountains">
+        </div>
+
+        <!-- Hero Content -->
+        <div class="relative z-20 text-center px-4 max-w-5xl mx-auto reveal active">
+            <p class="text-thc-gold font-bold uppercase tracking-[0.3em] text-sm md:text-base mb-6">Not a Tour. A Community.</p>
+            <h1 class="text-5xl md:text-7xl lg:text-8xl font-serif text-white mb-8 hero-text-shadow leading-tight">
+                Travel with Strangers.<br>
+                <span class="font-script-custom font-normal text-6xl md:text-8xl lg:text-9xl text-thc-gold/90 mt-4 block transform -rotate-2">Return as Family.</span>
+            </h1>
+            <p class="text-white/90 text-lg md:text-xl font-medium mb-10 max-w-2xl mx-auto leading-relaxed">
+                We take it slow. We explore the unseen. We bond over campfires, not itineraries.
+            </p>
+            <div class="flex flex-col md:flex-row gap-4 justify-center">
+                <a href="#philosophy" class="px-10 py-4 bg-white text-thc-green font-bold tracking-widest text-xs uppercase hover:bg-thc-gold hover:text-white transition duration-300 shadow-lg">
+                    Discover Our Way
+                </a>
+            </div>
+        </div>
+        
+        <!-- Scroll Down Indicator -->
+        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 text-white animate-bounce z-20">
+            <i class="ph ph-arrow-down text-2xl"></i>
+        </div>
+    </header>
+
+    <!-- Philosophy Section -->
+    <section id="philosophy" class="py-24 px-6 md:px-12 bg-thc-sand relative">
+        <div class="max-w-6xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+                <div class="reveal">
+                    <div class="relative">
+                        <div class="absolute -top-4 -left-4 w-20 h-20 border-t-2 border-l-2 border-thc-green/30"></div>
+                        <img src="https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1770&q=80" alt="Group of friends walking" class="w-full h-auto object-cover shadow-xl grayscale hover:grayscale-0 transition duration-700 rounded-sm">
+                        <div class="absolute -bottom-4 -right-4 w-20 h-20 border-b-2 border-r-2 border-thc-green/30"></div>
+                    </div>
+                </div>
+                <div class="reveal">
+                    <span class="text-thc-gold font-bold tracking-widest text-xs uppercase mb-2 block">The Manifesto</span>
+                    <h2 class="text-4xl md:text-5xl font-serif text-thc-green mb-8">Not a Business.<br><span class="font-script-custom text-5xl md:text-6xl text-thc-green/60 mt-2 block">A Connection.</span></h2>
+                    <p class="text-gray-600 mb-6 leading-loose font-medium text-lg">
+                        The HatchOut Club isn't about ticking boxes off a bucket list. It's about the moments in between. The coffee at sunrise, the deep conversations under starlight, and the serendipity of getting lost with people who were strangers yesterday.
+                    </p>
+                    <p class="text-gray-600 mb-8 leading-loose font-medium text-lg">
+                        We operate on a <span class="font-bold text-thc-green border-b-2 border-thc-gold">request-only basis</span>. We curate the group as carefully as we curate the destination. No rush, no crowded buses. Just pure, unadulterated exploration.
+                    </p>
+                    
+                    <div class="grid grid-cols-3 gap-4 border-t border-gray-200 pt-8">
+                        <div class="text-center group cursor-pointer">
+                            <i class="ph ph-users-three text-4xl text-thc-green mb-2 group-hover:scale-110 transition duration-300"></i>
+                            <p class="text-xs font-bold uppercase tracking-widest text-gray-500 group-hover:text-thc-gold transition">Network</p>
+                        </div>
+                        <div class="text-center group cursor-pointer">
+                            <i class="ph ph-tent text-4xl text-thc-green mb-2 group-hover:scale-110 transition duration-300"></i>
+                            <p class="text-xs font-bold uppercase tracking-widest text-gray-500 group-hover:text-thc-gold transition">Relax</p>
+                        </div>
+                        <div class="text-center group cursor-pointer">
+                            <i class="ph ph-compass text-4xl text-thc-green mb-2 group-hover:scale-110 transition duration-300"></i>
+                            <p class="text-xs font-bold uppercase tracking-widest text-gray-500 group-hover:text-thc-gold transition">Explore</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Parallax Quote -->
+    <section class="py-40 bg-fixed bg-cover bg-center relative" style="background-image: url('https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');">
+        <div class="absolute inset-0 bg-thc-green/70 mix-blend-multiply"></div>
+        <div class="relative z-10 container mx-auto px-6 text-center reveal">
+            <i class="ph ph-quotes text-6xl text-thc-gold/80 mb-8"></i>
+            <h3 class="text-3xl md:text-5xl font-serif text-white leading-relaxed max-w-4xl mx-auto">
+                "We travel not to escape life, but for life not to escape us. <br><span class="font-script-custom text-thc-gold text-5xl md:text-7xl mt-4 block">Join us to slow down time.</span>"
+            </h3>
+        </div>
+    </section>
+
+    <!-- The Vibe (Grid) -->
+    <section id="vibe" class="py-24 px-4 bg-white">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16 reveal">
+                <span class="text-thc-gold font-bold tracking-widest text-xs uppercase">Aesthetic</span>
+                <h2 class="text-4xl font-serif text-thc-green mt-3">The THC Vibe</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 h-[120vh] md:h-[80vh]">
+                <!-- Item 1 -->
+                <div class="image-hover-zoom relative h-full md:row-span-2 group cursor-pointer">
+                    <img src="https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" class="w-full h-full object-cover" alt="Bonfire">
+                    <div class="absolute inset-0 bg-thc-green/20 group-hover:bg-thc-green/60 transition duration-500"></div>
+                    <div class="absolute bottom-6 left-6 text-white opacity-0 group-hover:opacity-100 transition duration-500 translate-y-4 group-hover:translate-y-0">
+                        <p class="font-script-custom text-4xl text-thc-gold">Bonfire Nights</p>
+                    </div>
+                </div>
+                <!-- Item 2 -->
+                <div class="image-hover-zoom relative h-full group cursor-pointer">
+                    <img src="https://images.unsplash.com/photo-1468818438311-4bab781ab9b8?q=80&w=2738&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" class="w-full h-full object-cover" alt="Van life">
+                     <div class="absolute inset-0 bg-thc-green/20 group-hover:bg-thc-green/60 transition duration-500"></div>
+                     <div class="absolute bottom-6 left-6 text-white opacity-0 group-hover:opacity-100 transition duration-500 translate-y-4 group-hover:translate-y-0">
+                        <p class="font-script-custom text-4xl text-thc-gold">Slow Roads</p>
+                    </div>
+                </div>
+                <!-- Item 3 -->
+                <div class="image-hover-zoom relative h-full md:row-span-2 group cursor-pointer">
+                    <img src="https://images.unsplash.com/photo-1507041957456-9c397ce39c97?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" class="w-full h-full object-cover" alt="Forest walk">
+                     <div class="absolute inset-0 bg-thc-green/20 group-hover:bg-thc-green/60 transition duration-500"></div>
+                     <div class="absolute bottom-6 left-6 text-white opacity-0 group-hover:opacity-100 transition duration-500 translate-y-4 group-hover:translate-y-0">
+                        <p class="font-script-custom text-4xl text-thc-gold">Deep Woods</p>
+                    </div>
+                </div>
+                <!-- Item 4 -->
+                <div class="image-hover-zoom relative h-full group cursor-pointer">
+                    <img src="https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1770&q=80" class="w-full h-full object-cover" alt="Reading book">
+                     <div class="absolute inset-0 bg-thc-green/20 group-hover:bg-thc-green/60 transition duration-500"></div>
+                     <div class="absolute bottom-6 left-6 text-white opacity-0 group-hover:opacity-100 transition duration-500 translate-y-4 group-hover:translate-y-0">
+                        <p class="font-script-custom text-4xl text-thc-gold">Quiet Corners</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Upcoming HatchOuts -->
+    <section id="hatchouts" class="py-24 px-6 bg-thc-sand">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-12 reveal">
+                <div>
+                    <span class="text-thc-gold font-bold tracking-widest text-xs uppercase">Curated Experiences</span>
+                    <h2 class="text-4xl font-serif text-thc-green mt-3">Upcoming HatchOuts</h2>
+                </div>
+                <div class="hidden md:block">
+                    <p class="text-gray-500 font-serif italic text-lg">First come, first serve basis.</p>
+                </div>
+            </div>
+
+          <!--  <div class="grid grid-cols-1 md:grid-cols-3 gap-8">-->
+                <!-- Trip Card 1 -->
+                <div class="bg-white shadow-sm hover:shadow-2xl transition duration-500 group reveal border border-gray-100">
+                    <div class="relative overflow-hidden h-96">
+                        <img src="https://images.unsplash.com/photo-1711609110590-5ad5c4599e56?q=80&w=2942&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Bali" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
+                        <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-4 py-2 text-xs font-bold tracking-widest text-thc-green uppercase">
+                            4 Spots Left
+                        </div>
+                    </div>
+                    <div class="p-8">
+                        <div class="text-xs text-thc-gold font-bold tracking-widest uppercase mb-2">July 2026</div>
+                        <h3 class="text-2xl font-serif text-thc-green mb-3">The Hidden Bali</h3>
+                        <p class="text-gray-600 font-medium text-sm mb-6 leading-relaxed">
+                            A week in a bamboo villa deep in the jungle. Yoga at sunrise, waterfalls at noon, and authentic networking with digital nomads.
+                        </p>
+                        <button onclick="openModal('The Hidden Bali')" class="text-thc-green text-sm font-bold uppercase tracking-widest border-b-2 border-thc-green pb-1 hover:text-thc-gold hover:border-thc-gold transition">
+                            Request Invite
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Trip Card 2 
+                <div class="bg-white shadow-sm hover:shadow-2xl transition duration-500 group reveal border border-gray-100" style="transition-delay: 100ms;">
+                    <div class="relative overflow-hidden h-96">
+                        <img src="https://images.unsplash.com/photo-1491555103987-172936355208?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="Alps" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
+                        <div class="absolute top-4 right-4 bg-thc-green/90 backdrop-blur-sm px-4 py-2 text-xs font-bold tracking-widest text-white uppercase">
+                            Full - Waitlist
+                        </div>
+                    </div>
+                    <div class="p-8">
+                        <div class="text-xs text-thc-gold font-bold tracking-widest uppercase mb-2">December 2023</div>
+                        <h3 class="text-2xl font-serif text-thc-green mb-3">Swiss Slow Life</h3>
+                        <p class="text-gray-600 font-medium text-sm mb-6 leading-relaxed">
+                            A wooden cabin in the Alps. No Wi-Fi, just fondue, snow hikes, and deep connections. A digital detox for the soul.
+                        </p>
+                        <button onclick="openModal('Swiss Slow Life')" class="text-thc-green text-sm font-bold uppercase tracking-widest border-b-2 border-thc-green pb-1 hover:text-thc-gold hover:border-thc-gold transition">
+                            Join Waitlist
+                        </button>
+                    </div>
+                </div>
+
+                Trip Card 3 
+                <div class="bg-white shadow-sm hover:shadow-2xl transition duration-500 group reveal border border-gray-100" style="transition-delay: 200ms;">
+                    <div class="relative overflow-hidden h-96">
+                        <img src="https://images.unsplash.com/photo-1533090161767-e6ffed986c88?ixlib=rb-4.0.3&auto=format&fit=crop&w=2069&q=80" alt="Rajasthan" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
+                        <div class="absolute top-4 right-4 bg-thc-gold/90 backdrop-blur-sm px-4 py-2 text-xs font-bold tracking-widest text-thc-green uppercase">
+                            Open
+                        </div>
+                    </div>
+                    <div class="p-8">
+                        <div class="text-xs text-thc-gold font-bold tracking-widest uppercase mb-2">February 2024</div>
+                        <h3 class="text-2xl font-serif text-thc-green mb-3">Royal Sands</h3>
+                        <p class="text-gray-600 font-medium text-sm mb-6 leading-relaxed">
+                            Glamping in the Thar Desert. Folk music, dune bashing, and stargazing with creative minds from around the world.
+                        </p>
+                        <button onclick="openModal('Royal Sands')" class="text-thc-green text-sm font-bold uppercase tracking-widest border-b-2 border-thc-green pb-1 hover:text-thc-gold hover:border-thc-gold transition">
+                            Request Invite
+                        </button>
+                    </div>-->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Join Club / Footer Area -->
+    <section id="join" class="relative py-32 bg-thc-green text-white text-center px-4 overflow-hidden">
+        <!-- Decoration -->
+        <div class="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none" style="background-image: url('https://www.transparenttextures.com/patterns/cubes.png');"></div>
+        
+        <div class="relative z-10 max-w-3xl mx-auto reveal">
+             <img src="THC_LOGO.jpg" alt="THC Logo" class="h-28 mb-6 inline-block rounded-full border-4 border-white/10 shadow-2xl">
+            <h2 class="text-4xl md:text-6xl font-serif mb-6">Ready to Hatch Out?</h2>
+            <p class="text-lg md:text-xl font-medium mb-10 text-white/80">
+                Join our community of mindful travelers. Be the first to know when a new journey hatches.
+            </p>
+            
+            <form onsubmit="handleSubscribe(event)" class="flex flex-col md:flex-row gap-4 justify-center max-w-lg mx-auto mb-16">
+                <input type="email" placeholder="Your Email Address" required 
+                       class="px-6 py-4 bg-white/10 border border-white/20 text-white placeholder-white/50 focus:outline-none focus:bg-white/20 flex-grow font-bold tracking-wide">
+                <button type="submit" class="px-8 py-4 bg-thc-gold text-thc-green font-bold tracking-widest uppercase hover:bg-white transition duration-300 shadow-lg">
+                    Join Club
+                </button>
+            </form>
+
+            <div class="flex justify-center gap-8 text-2xl mb-8 text-white/60">
+                <a href="#" class="hover:text-thc-gold transition transform hover:-translate-y-1"><i class="ph ph-instagram-logo"></i></a>
+                <a href="#" class="hover:text-thc-gold transition transform hover:-translate-y-1"><i class="ph ph-twitter-logo"></i></a>
+                <a href="#" class="hover:text-thc-gold transition transform hover:-translate-y-1"><i class="ph ph-pinterest-logo"></i></a>
+            </div>
+            
+            <p class="text-xs text-white/30 font-bold tracking-widest uppercase">
+                © 2023 The HatchOut Club. All rights reserved. <br>Designed for connection.
+            </p>
+        </div>
+    </section>
+
+    <!-- Modal Form -->
+    <div id="requestModal" class="fixed inset-0 z-[60] hidden">
+        <div class="absolute inset-0 bg-thc-green/90 backdrop-blur-sm" onclick="closeModal()"></div>
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-thc-sand w-full max-w-lg p-8 md:p-12 shadow-2xl border border-white/50">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-500 hover:text-thc-green">
+                <i class="ph ph-x text-2xl"></i>
+            </button>
+            
+            <div class="text-center mb-8">
+                <span class="text-thc-gold font-bold tracking-widest text-xs uppercase">Begin the Journey</span>
+                <h3 class="text-3xl font-serif text-thc-green mt-2" id="modalTitle">Request Invite</h3>
+                <p class="text-gray-500 text-sm mt-2 font-medium">Tell us a bit about yourself. We curate our groups for the best vibe.</p>
+            </div>
+
+ <form 
+    action="https://formspree.io/f/mpwgewwy" 
+    method="POST" 
+    class="space-y-6"
+>
+    <div>
+        <label class="block text-xs uppercase tracking-widest text-gray-500 mb-2 font-bold">Name</label>
+        <input 
+            type="text" 
+            name="name" 
+            required 
+            class="w-full bg-white border border-gray-200 p-4 focus:outline-none focus:border-thc-green focus:ring-1 focus:ring-thc-green transition rounded-sm"
+        >
+    </div>
+
+    <div>
+        <label class="block text-xs uppercase tracking-widest text-gray-500 mb-2 font-bold">Email</label>
+        <input 
+            type="email" 
+            name="email" 
+            required 
+            class="w-full bg-white border border-gray-200 p-4 focus:outline-none focus:border-thc-green focus:ring-1 focus:ring-thc-green transition rounded-sm"
+        >
+    </div>
+
+    <div>
+        <label class="block text-xs uppercase tracking-widest text-gray-500 mb-2 font-bold">Why do you want to join?</label>
+        <textarea 
+            rows="3" 
+            name="message" 
+            required 
+            class="w-full bg-white border border-gray-200 p-4 focus:outline-none focus:border-thc-green focus:ring-1 focus:ring-thc-green transition rounded-sm"
+        ></textarea>
+    </div>
+
+    <!-- Optional: subject line -->
+    <input type="hidden" name="_subject" value="New Join Request">
+
+    <button 
+        type="submit" 
+        class="w-full py-4 bg-thc-green text-white font-bold tracking-widest uppercase hover:bg-thc-gold transition duration-300 mt-2 shadow-lg"
+    >
+        Send Request
+    </button>
+</form>
+
+        </div>
+    </div>
+
+    <!-- Success Notification -->
+    <div id="notification" class="fixed bottom-8 right-8 bg-white shadow-2xl p-6 transform translate-y-40 transition-transform duration-500 z-[70] border-l-4 border-thc-green max-w-sm rounded-r-lg">
+        <h4 class="font-serif text-lg text-thc-green mb-1">Request Received</h4>
+        <p class="text-gray-600 text-sm font-medium">We've received your request. If the vibe matches, we'll see you soon.</p>
+    </div>
+
+    <script>
+        // Loader
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('loader');
+            setTimeout(() => {
+                loader.style.opacity = '0';
+                loader.style.visibility = 'hidden';
+            }, 1000);
+        });
+
+        // Navbar Color Change on Scroll
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('bg-thc-green/95', 'backdrop-blur-md', 'shadow-lg');
+                navbar.classList.remove('py-4');
+                navbar.classList.add('py-3');
+            } else {
+                navbar.classList.remove('bg-thc-green/95', 'backdrop-blur-md', 'shadow-lg', 'py-3');
+                navbar.classList.add('py-4');
+            }
+        });
+
+        // Scroll Reveal Animation
+        const reveals = document.querySelectorAll('.reveal');
+        
+        function reveal() {
+            for (let i = 0; i < reveals.length; i++) {
+                let windowHeight = window.innerHeight;
+                let elementTop = reveals[i].getBoundingClientRect().top;
+                let elementVisible = 150;
+
+                if (elementTop < windowHeight - elementVisible) {
+                    reveals[i].classList.add("active");
+                }
+            }
+        }
+        window.addEventListener("scroll", reveal);
+        // Trigger once on load
+        reveal();
+
+        // Mobile Menu
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const isOpen = !menu.classList.contains('translate-x-full');
+            if (isOpen) {
+                menu.classList.add('translate-x-full');
+            } else {
+                menu.classList.remove('translate-x-full');
+            }
+        }
+
+        // Modal Logic
+        function openModal(tripName) {
+            const modal = document.getElementById('requestModal');
+            const title = document.getElementById('modalTitle');
+            title.innerText = tripName ? `Request: ${tripName}` : 'Join the Club';
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('requestModal').classList.add('hidden');
+        }
+
+        // Form Handling (Mock)
+        function handleRequest(e) {
+            e.preventDefault();
+            closeModal();
+            showNotification();
+        }
+
+        function handleSubscribe(e) {
+            e.preventDefault();
+            showNotification();
+        }
+
+        function showNotification() {
+            const notif = document.getElementById('notification');
+            notif.classList.remove('translate-y-40');
+            setTimeout(() => {
+                notif.classList.add('translate-y-40');
+            }, 4000);
+        }
+    </script>
+</body>
+</html>
